@@ -3,9 +3,9 @@ package main
 type Status int
 
 const (
-	StatusRed    Status = itoa
-	StatusSilver Status = itoa
-	StatusGold   Status = itoa
+	StatusRed    Status = iota
+	StatusSilver Status = iota
+	StatusGold   Status = iota
 )
 
 type FrequentFlierAccountCreated struct {
