@@ -1,5 +1,6 @@
 package main
 
+// Status represents the Red, Silver or Gold tier level of a FrequentFlierAccount
 type Status int
 
 const (

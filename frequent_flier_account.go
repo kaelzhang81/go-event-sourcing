@@ -15,6 +15,7 @@ type FrequentFlierAccount struct {
 	changes         []interface{}
 }
 
+// String implements Stringer for FrequentFlierAccount instances.
 func (account FrequentFlierAccount) String() string {
 	format := `FrequentFlierAccount: %s
     Miles: %d
@@ -28,6 +29,8 @@ func (account FrequentFlierAccount) String() string {
 		account.status, account.expectedVersion, len(account.changes))
 }
 
+// NewFrequentFlierAccountFromHistory creates a FrequentFlierAccount given a history
+// of the changes which have occurred for that account.
 func NewFrequentFlierAccountFromHistory(events []interface{}) *FrequentFlierAccount {
 	state := &FrequentFlierAccount{}
 
@@ -39,6 +42,8 @@ func NewFrequentFlierAccountFromHistory(events []interface{}) *FrequentFlierAcco
 	return state
 }
 
+// transition imnplements the pattern match against event types used both as part
+// of the fold when loading from history and when tracking an individual change.
 func (state *FrequentFlierAccount) transition(event interface{}) {
 	switch e := event.(type) {
 	case FrequentFlierAccountCreated:
@@ -56,11 +61,19 @@ func (state *FrequentFlierAccount) transition(event interface{}) {
 	}
 }
 
+// trackChange is used internally by bevhavious methods to apply a state change to
+// the current instance and also track it in order that it can be persisted later.
 func (state *FrequentFlierAccount) trackChange(event interface{}) {
 	state.changes = append(state.changes, event)
 	state.transition(event)
 }
 
+// RecordFlightTaken is used to record the fact that a customer has taken a flight
+// which should be attached to this frequent flier account. The number of miles and
+// tier points which apply are calculated externally.
+//
+// If recording this flight takes the account over a status boundary, it will
+// automatically upgrade the account to the new status level.
 func (state *FrequentFlierAccount) RecordFlightTaken(miles int, tierPoints int) {
 	state.trackChange(FlightTaken{MilesAdded: miles, TierPointAdded: tierPoints})
 
