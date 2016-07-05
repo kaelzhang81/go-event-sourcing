@@ -19,10 +19,13 @@ func (account FrequentFlierAccount) String() string {
 	format := `FrequentFlierAccount: %s
     Miles: %d
     TierPoints: %d
-    Status: %d
+    Status: %s
+    (Expected Version: %d)
+    (Pending Changes: %d)
 `
 
-	return fmt.Sprintf(format, account.id, account.miles, account.tierPoints, account.status)
+	return fmt.Sprintf(format, account.id, account.miles, account.tierPoints,
+		account.status, account.expectedVersion, len(account.changes))
 }
 
 func NewFrequentFlierAccountFromHistory(events []interface{}) *FrequentFlierAccount {
@@ -50,5 +53,18 @@ func (state *FrequentFlierAccount) transition(event interface{}) {
 		state.tierPoints += e.TierPointAdded
 	case PromotedToGoldStatus:
 		state.status = StatusGold
+	}
+}
+
+func (state *FrequentFlierAccount) trackChange(event interface{}) {
+	state.changes = append(state.changes, event)
+	state.transition(event)
+}
+
+func (state *FrequentFlierAccount) RecordFlightTaken(miles int, tierPoints int) {
+	state.trackChange(FlightTaken{MilesAdded: miles, TierPointAdded: tierPoints})
+
+	if state.tierPoints > 20 && state.status != StatusGold {
+		state.trackChange(PromotedToGoldStatus{})
 	}
 }

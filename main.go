@@ -15,5 +15,10 @@ func main() {
 	}
 
 	aggregate := NewFrequentFlierAccountFromHistory(history)
+	fmt.Println("before RecordFlightTaken")
+	fmt.Println(aggregate)
+
+	aggregate.RecordFlightTaken(1000, 3)
+	fmt.Println("after RecordFlightTaken")
 	fmt.Println(aggregate)
 }
