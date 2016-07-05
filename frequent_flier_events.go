@@ -9,9 +9,9 @@ const (
 )
 
 type FrequentFlierAccountCreated struct {
-	AccountId        string
-	OpeningMiles     int
-	OpeningTierPoint int
+	AccountId         string
+	OpeningMiles      int
+	OpeningTierPoints int
 }
 
 type StatusMatched struct {
